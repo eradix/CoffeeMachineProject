@@ -14,24 +14,30 @@ def check_stock_resources(stock_resources, choice_menu):
     milk_need = choice_menu['ingredients'].get('milk', 0)
     coffee_need = choice_menu['ingredients'].get('coffee', 0)
 
+    result = {}
+
     if water_need != 0 and water_need > stock_resources['water']:
-        return {
-            'is_sufficient': False,
-            'resources': 'water'
-        }
-    elif milk_need != 0 and milk_need > stock_resources['milk']:
-        return {
-            'is_sufficient': False,
-            'resources': 'milk'
-        }
-    elif coffee_need != 0 and coffee_need > stock_resources['coffee']:
-        return {
-            'is_sufficient': False,
-            'resources': 'coffee'
-        }
-    return {
-        'is_sufficient': True
-    }
+        if 'resources' not in result:
+            result['resources'] = ['water']
+        else:
+            result['resources'].append('water')
+    if milk_need != 0 and milk_need > stock_resources['milk']:
+        if 'resources' not in result:
+            result['resources'] = ['milk']
+        else:
+            result['resources'].append('milk')
+    if coffee_need != 0 and coffee_need > stock_resources['coffee']:
+        if 'resources' not in result:
+            result['resources'] = ['coffee']
+        else:
+            result['resources'].append('coffee')
+
+    if 'resources' in result:
+        result['is_sufficient'] = False
+        return result
+    else:
+        result['is_sufficient'] = True
+        return result
 
 
 def calculate_customer_money(quarter, dime, nickle, penny):
@@ -137,4 +143,5 @@ if __name__ == '__main__':
                     print("Sorry that's not enough money. Money refunded.")
 
             else:
-                print(f"Sorry there is not enough {result_resources['resources']}.")
+                for resource in result_resources['resources']:
+                    print(f"Sorry there is not enough {resource}.")
